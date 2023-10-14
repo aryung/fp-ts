@@ -1,40 +1,40 @@
 export type Some<T> = {
-  type: "Some";
+  type: 'Some';
   value: T;
 };
 
 export type None = {
-  type: "None";
+  type: 'None';
 };
 
 export type Option<T> = Some<T> | None;
 
 export type Ok<T> = {
-  type: "Ok";
+  type: 'Ok';
   value: T;
 };
 
 export type Err<E> = {
-  type: "Err";
+  type: 'Err';
   error: E;
 };
 
 export type Result<T, E> = Ok<T> | Err<E>;
 
 export function isSome<T>(option: Option<T>): option is Some<T> {
-  return option.type === "Some";
+  return option.type === 'Some';
 }
 
 export function isNone<T>(option: Option<T>): option is None {
-  return option.type === "None";
+  return option.type === 'None';
 }
 
 export function isOk<T, E>(result: Result<T, E>): result is Ok<T> {
-  return result.type === "Ok";
+  return result.type === 'Ok';
 }
 
 export function isErr<T, E>(result: Result<T, E>): result is Err<E> {
-  return result.type === "Err";
+  return result.type === 'Err';
 }
 
 // rust Option/Result
@@ -42,20 +42,20 @@ export function isErr<T, E>(result: Result<T, E>): result is Err<E> {
 // tools
 export function map<T, U>(option: Option<T>, f: (value: T) => U): Option<U> {
   if (isSome(option)) {
-    return { type: "Some", value: f(option.value) };
+    return { type: 'Some', value: f(option.value) };
   } else {
-    return { type: "None" };
+    return { type: 'None' };
   }
 }
 
 export function flatMap<T, U>(
   option: Option<T>,
-  f: (value: T) => Option<U>,
+  f: (value: T) => Option<U>
 ): Option<U> {
   if (isSome(option)) {
     return f(option.value);
   } else {
-    return { type: "None" };
+    return { type: 'None' };
   }
 }
 
@@ -69,7 +69,7 @@ export function getOrElse<T>(option: Option<T>, defaultValue: T): T {
 
 export function orElse<T>(
   option: Option<T>,
-  defaultValue: Option<T>,
+  defaultValue: Option<T>
 ): Option<T> {
   if (isSome(option)) {
     return option;
@@ -80,16 +80,16 @@ export function orElse<T>(
 
 export function filter<T>(
   option: Option<T>,
-  predicate: (value: T) => boolean,
+  predicate: (value: T) => boolean
 ): Option<T> {
   if (isSome(option)) {
     if (predicate(option.value)) {
       return option;
     } else {
-      return { type: "None" };
+      return { type: 'None' };
     }
   } else {
-    return { type: "None" };
+    return { type: 'None' };
   }
 }
 
@@ -102,7 +102,7 @@ export function forEach<T>(option: Option<T>, f: (value: T) => void): void {
 export function match<T, U>(
   option: Option<T>,
   some: (value: T) => U,
-  none: () => U,
+  none: () => U
 ): U {
   if (isSome(option)) {
     return some(option.value);
@@ -137,9 +137,9 @@ export function toUndefined<T>(option: Option<T>): T | undefined {
 
 export function toResult<T, E>(option: Option<T>, error: E): Result<T, E> {
   if (isSome(option)) {
-    return { type: "Ok", value: option.value };
+    return { type: 'Ok', value: option.value };
   } else {
-    return { type: "Err", error };
+    return { type: 'Err', error };
   }
 }
 
@@ -153,42 +153,42 @@ export function toPromise<T>(option: Option<T>): Promise<T> {
 
 export function fromNullable<T>(value: T | null): Option<T> {
   if (value === null) {
-    return { type: "None" };
+    return { type: 'None' };
   } else {
-    return { type: "Some", value };
+    return { type: 'Some', value };
   }
 }
 
 export function fromUndefined<T>(value: T | undefined): Option<T> {
   if (value === undefined) {
-    return { type: "None" };
+    return { type: 'None' };
   } else {
-    return { type: "Some", value };
+    return { type: 'Some', value };
   }
 }
 
 export function fromResult<T, E>(result: Result<T, E>): Option<T> {
   if (isOk(result)) {
-    return { type: "Some", value: result.value };
+    return { type: 'Some', value: result.value };
   } else {
-    return { type: "None" };
+    return { type: 'None' };
   }
 }
 
-// export function fromPromise<T>(promise: Promise<T>): Promise<Option<T>> {
-//   return promise
-//     .then((value) => ({ type: "Some", value }))
-//     .catch(() => ({ type: "None" }));
-// }
+export function fromPromise<T>(promise: Promise<T>): Promise<Option<T>> {
+  return promise
+    .then((value): Some<T> => ({ type: 'Some', value }))
+    .catch((): None => ({ type: 'None' }));
+}
 
 export function fromPredicate<T>(
   value: T,
-  predicate: (value: T) => boolean,
+  predicate: (value: T) => boolean
 ): Option<T> {
   if (predicate(value)) {
-    return { type: "Some", value };
+    return { type: 'Some', value };
   } else {
-    return { type: "None" };
+    return { type: 'None' };
   }
 }
 
@@ -226,12 +226,12 @@ export function fromOptionUndefined<T>(option: Option<T>): T | undefined {
 
 export function fromOptionResult<T, E>(
   option: Option<T>,
-  error: E,
+  error: E
 ): Result<T, E> {
   if (isSome(option)) {
-    return { type: "Ok", value: option.value };
+    return { type: 'Ok', value: option.value };
   } else {
-    return { type: "Err", error };
+    return { type: 'Err', error };
   }
 }
 
@@ -245,7 +245,7 @@ export function fromOptionPromise<T>(option: Option<T>): Promise<T> {
 
 export function fromOptionPredicate<T>(
   option: Option<T>,
-  predicate: (value: T) => boolean,
+  predicate: (value: T) => boolean
 ): boolean {
   if (isSome(option)) {
     return predicate(option.value);
@@ -256,7 +256,7 @@ export function fromOptionPredicate<T>(
 
 export function fromOptionOption<T>(
   option: Option<T>,
-  defaultValue: Option<T>,
+  defaultValue: Option<T>
 ): Option<T> {
   if (isSome(option)) {
     return option;
@@ -267,7 +267,7 @@ export function fromOptionOption<T>(
 
 export function fromOptionOptionLazy<T>(
   option: Option<T>,
-  defaultValue: () => Option<T>,
+  defaultValue: () => Option<T>
 ): Option<T> {
   if (isSome(option)) {
     return option;
@@ -294,12 +294,12 @@ export function fromOptionOptionUndefined<T>(option: Option<T>): T | undefined {
 
 export function fromOptionOptionResult<T, E>(
   option: Option<T>,
-  error: E,
+  error: E
 ): Result<T, E> {
   if (isSome(option)) {
-    return { type: "Ok", value: option.value };
+    return { type: 'Ok', value: option.value };
   } else {
-    return { type: "Err", error };
+    return { type: 'Err', error };
   }
 }
 
@@ -313,23 +313,23 @@ export function fromOptionOptionPromise<T>(option: Option<T>): Promise<T> {
 
 export function fromOptionPredicateOption<T>(
   option: Option<T>,
-  predicate: (value: T) => boolean,
+  predicate: (value: T) => boolean
 ): Option<T> {
   if (isSome(option)) {
     if (predicate(option.value)) {
       return option;
     } else {
-      return { type: "None" };
+      return { type: 'None' };
     }
   } else {
-    return { type: "None" };
+    return { type: 'None' };
   }
 }
 
 export function fromOptionPredicateOptionLazy<T>(
   option: Option<T>,
   predicate: (value: T) => boolean,
-  defaultValue: () => Option<T>,
+  defaultValue: () => Option<T>
 ): Option<T> {
   if (isSome(option)) {
     if (predicate(option.value)) {
@@ -344,7 +344,7 @@ export function fromOptionPredicateOptionLazy<T>(
 
 export function fromOptionPredicateOptionNullable<T>(
   option: Option<T>,
-  predicate: (value: T) => boolean,
+  predicate: (value: T) => boolean
 ): T | null {
   if (isSome(option)) {
     if (predicate(option.value)) {
@@ -359,7 +359,7 @@ export function fromOptionPredicateOptionNullable<T>(
 
 export function fromOptionPredicateOptionUndefined<T>(
   option: Option<T>,
-  predicate: (value: T) => boolean,
+  predicate: (value: T) => boolean
 ): T | undefined {
   if (isSome(option)) {
     if (predicate(option.value)) {
@@ -375,22 +375,22 @@ export function fromOptionPredicateOptionUndefined<T>(
 export function fromOptionPredicateOptionResult<T, E>(
   option: Option<T>,
   predicate: (value: T) => boolean,
-  error: E,
+  error: E
 ): Result<T, E> {
   if (isSome(option)) {
     if (predicate(option.value)) {
-      return { type: "Ok", value: option.value };
+      return { type: 'Ok', value: option.value };
     } else {
-      return { type: "Err", error };
+      return { type: 'Err', error };
     }
   } else {
-    return { type: "Err", error };
+    return { type: 'Err', error };
   }
 }
 
 export function fromOptionPredicateOptionPromise<T>(
   option: Option<T>,
-  predicate: (value: T) => boolean,
+  predicate: (value: T) => boolean
 ): Promise<T> {
   if (isSome(option)) {
     if (predicate(option.value)) {
@@ -406,7 +406,7 @@ export function fromOptionPredicateOptionPromise<T>(
 export function fromOptionPredicateOptionPredicate<T>(
   option: Option<T>,
   predicate: (value: T) => boolean,
-  defaultValue: Option<T>,
+  defaultValue: Option<T>
 ): Option<T> {
   if (isSome(option)) {
     if (predicate(option.value)) {
@@ -422,7 +422,7 @@ export function fromOptionPredicateOptionPredicate<T>(
 export function fromOptionPredicateOptionPredicateLazy<T>(
   option: Option<T>,
   predicate: (value: T) => boolean,
-  defaultValue: () => Option<T>,
+  defaultValue: () => Option<T>
 ): Option<T> {
   if (isSome(option)) {
     if (predicate(option.value)) {
@@ -437,7 +437,7 @@ export function fromOptionPredicateOptionPredicateLazy<T>(
 
 export function fromOptionPredicateOptionPredicateNullable<T>(
   option: Option<T>,
-  predicate: (value: T) => boolean,
+  predicate: (value: T) => boolean
 ): T | null {
   if (isSome(option)) {
     if (predicate(option.value)) {
@@ -452,7 +452,7 @@ export function fromOptionPredicateOptionPredicateNullable<T>(
 
 export function fromOptionPredicateOptionPredicateUndefined<T>(
   option: Option<T>,
-  predicate: (value: T) => boolean,
+  predicate: (value: T) => boolean
 ): T | undefined {
   if (isSome(option)) {
     if (predicate(option.value)) {
@@ -468,22 +468,22 @@ export function fromOptionPredicateOptionPredicateUndefined<T>(
 export function fromOptionPredicateOptionPredicateResult<T, E>(
   option: Option<T>,
   predicate: (value: T) => boolean,
-  error: E,
+  error: E
 ): Result<T, E> {
   if (isSome(option)) {
     if (predicate(option.value)) {
-      return { type: "Ok", value: option.value };
+      return { type: 'Ok', value: option.value };
     } else {
-      return { type: "Err", error };
+      return { type: 'Err', error };
     }
   } else {
-    return { type: "Err", error };
+    return { type: 'Err', error };
   }
 }
 
 export function fromOptionPredicateOptionPredicatePromise<T>(
   option: Option<T>,
-  predicate: (value: T) => boolean,
+  predicate: (value: T) => boolean
 ): Promise<T> {
   if (isSome(option)) {
     if (predicate(option.value)) {
@@ -499,7 +499,7 @@ export function fromOptionPredicateOptionPredicatePromise<T>(
 export function fromOptionPredicateOptionPredicatePredicate<T>(
   option: Option<T>,
   predicate: (value: T) => boolean,
-  defaultValue: Option<T>,
+  defaultValue: Option<T>
 ): Option<T> {
   if (isSome(option)) {
     if (predicate(option.value)) {
@@ -515,7 +515,7 @@ export function fromOptionPredicateOptionPredicatePredicate<T>(
 export function fromOptionPredicateOptionPredicatePredicateLazy<T>(
   option: Option<T>,
   predicate: (value: T) => boolean,
-  defaultValue: () => Option<T>,
+  defaultValue: () => Option<T>
 ): Option<T> {
   if (isSome(option)) {
     if (predicate(option.value)) {
@@ -530,7 +530,7 @@ export function fromOptionPredicateOptionPredicatePredicateLazy<T>(
 
 export function fromOptionPredicateOptionPredicatePredicateNullable<T>(
   option: Option<T>,
-  predicate: (value: T) => boolean,
+  predicate: (value: T) => boolean
 ): T | null {
   if (isSome(option)) {
     if (predicate(option.value)) {
@@ -545,7 +545,7 @@ export function fromOptionPredicateOptionPredicatePredicateNullable<T>(
 
 export function fromOptionPredicateOptionPredicatePredicateUndefined<T>(
   option: Option<T>,
-  predicate: (value: T) => boolean,
+  predicate: (value: T) => boolean
 ): T | undefined {
   if (isSome(option)) {
     if (predicate(option.value)) {
@@ -561,22 +561,22 @@ export function fromOptionPredicateOptionPredicatePredicateUndefined<T>(
 export function fromOptionPredicateOptionPredicatePredicateResult<T, E>(
   option: Option<T>,
   predicate: (value: T) => boolean,
-  error: E,
+  error: E
 ): Result<T, E> {
   if (isSome(option)) {
     if (predicate(option.value)) {
-      return { type: "Ok", value: option.value };
+      return { type: 'Ok', value: option.value };
     } else {
-      return { type: "Err", error };
+      return { type: 'Err', error };
     }
   } else {
-    return { type: "Err", error };
+    return { type: 'Err', error };
   }
 }
 
 export function fromOptionPredicateOptionPredicatePredicatePromise<T>(
   option: Option<T>,
-  predicate: (value: T) => boolean,
+  predicate: (value: T) => boolean
 ): Promise<T> {
   if (isSome(option)) {
     if (predicate(option.value)) {
@@ -592,7 +592,7 @@ export function fromOptionPredicateOptionPredicatePredicatePromise<T>(
 export function fromOptionPredicateOptionPredicatePredicatePredicate<T>(
   option: Option<T>,
   predicate: (value: T) => boolean,
-  defaultValue: Option<T>,
+  defaultValue: Option<T>
 ): Option<T> {
   if (isSome(option)) {
     if (predicate(option.value)) {
@@ -608,7 +608,7 @@ export function fromOptionPredicateOptionPredicatePredicatePredicate<T>(
 export function fromOptionPredicateOptionPredicatePredicatePredicateLazy<T>(
   option: Option<T>,
   predicate: (value: T) => boolean,
-  defaultValue: () => Option<T>,
+  defaultValue: () => Option<T>
 ): Option<T> {
   if (isSome(option)) {
     if (predicate(option.value)) {
@@ -623,7 +623,7 @@ export function fromOptionPredicateOptionPredicatePredicatePredicateLazy<T>(
 
 export function fromOptionPredicateOptionPredicatePredicatePredicateNullable<T>(
   option: Option<T>,
-  predicate: (value: T) => boolean,
+  predicate: (value: T) => boolean
 ): T | null {
   if (isSome(option)) {
     if (predicate(option.value)) {
@@ -637,7 +637,7 @@ export function fromOptionPredicateOptionPredicatePredicatePredicateNullable<T>(
 }
 
 export function fromOptionPredicateOptionPredicatePredicatePredicateUndefined<
-  T,
+  T
 >(option: Option<T>, predicate: (value: T) => boolean): T | undefined {
   if (isSome(option)) {
     if (predicate(option.value)) {
@@ -652,22 +652,22 @@ export function fromOptionPredicateOptionPredicatePredicatePredicateUndefined<
 
 export function fromOptionPredicateOptionPredicatePredicatePredicateResult<
   T,
-  E,
+  E
 >(option: Option<T>, predicate: (value: T) => boolean, error: E): Result<T, E> {
   if (isSome(option)) {
     if (predicate(option.value)) {
-      return { type: "Ok", value: option.value };
+      return { type: 'Ok', value: option.value };
     } else {
-      return { type: "Err", error };
+      return { type: 'Err', error };
     }
   } else {
-    return { type: "Err", error };
+    return { type: 'Err', error };
   }
 }
 
 export function fromOptionPredicateOptionPredicatePredicatePredicatePromise<T>(
   option: Option<T>,
-  predicate: (value: T) => boolean,
+  predicate: (value: T) => boolean
 ): Promise<T> {
   if (isSome(option)) {
     if (predicate(option.value)) {
@@ -681,11 +681,11 @@ export function fromOptionPredicateOptionPredicatePredicatePredicatePromise<T>(
 }
 
 export function fromOptionPredicateOptionPredicatePredicatePredicatePredicate<
-  T,
+  T
 >(
   option: Option<T>,
   predicate: (value: T) => boolean,
-  defaultValue: Option<T>,
+  defaultValue: Option<T>
 ): Option<T> {
   if (isSome(option)) {
     if (predicate(option.value)) {
@@ -699,11 +699,11 @@ export function fromOptionPredicateOptionPredicatePredicatePredicatePredicate<
 }
 
 export function fromOptionPredicateOptionPredicatePredicatePredicatePredicateLazy<
-  T,
+  T
 >(
   option: Option<T>,
   predicate: (value: T) => boolean,
-  defaultValue: () => Option<T>,
+  defaultValue: () => Option<T>
 ): Option<T> {
   if (isSome(option)) {
     if (predicate(option.value)) {
@@ -717,7 +717,7 @@ export function fromOptionPredicateOptionPredicatePredicatePredicatePredicateLaz
 }
 
 export function fromOptionPredicateOptionPredicatePredicatePredicatePredicateNullable<
-  T,
+  T
 >(option: Option<T>, predicate: (value: T) => boolean): T | null {
   if (isSome(option)) {
     if (predicate(option.value)) {
@@ -731,7 +731,7 @@ export function fromOptionPredicateOptionPredicatePredicatePredicatePredicateNul
 }
 
 export function fromOptionPredicateOptionPredicatePredicatePredicatePredicateUndefined<
-  T,
+  T
 >(option: Option<T>, predicate: (value: T) => boolean): T | undefined {
   if (isSome(option)) {
     if (predicate(option.value)) {
@@ -746,21 +746,21 @@ export function fromOptionPredicateOptionPredicatePredicatePredicatePredicateUnd
 
 export function fromOptionPredicateOptionPredicatePredicatePredicatePredicateResult<
   T,
-  E,
+  E
 >(option: Option<T>, predicate: (value: T) => boolean, error: E): Result<T, E> {
   if (isSome(option)) {
     if (predicate(option.value)) {
-      return { type: "Ok", value: option.value };
+      return { type: 'Ok', value: option.value };
     } else {
-      return { type: "Err", error };
+      return { type: 'Err', error };
     }
   } else {
-    return { type: "Err", error };
+    return { type: 'Err', error };
   }
 }
 
 export function fromOptionPredicateOptionPredicatePredicatePredicatePredicatePromise<
-  T,
+  T
 >(option: Option<T>, predicate: (value: T) => boolean): Promise<T> {
   if (isSome(option)) {
     if (predicate(option.value)) {
@@ -774,11 +774,11 @@ export function fromOptionPredicateOptionPredicatePredicatePredicatePredicatePro
 }
 
 export function fromOptionPredicateOptionPredicatePredicatePredicatePredicatePredicate<
-  T,
+  T
 >(
   option: Option<T>,
   predicate: (value: T) => boolean,
-  defaultValue: Option<T>,
+  defaultValue: Option<T>
 ): Option<T> {
   if (isSome(option)) {
     if (predicate(option.value)) {
