@@ -37,6 +37,9 @@ export function isErr<T, E>(result: Result<T, E>): result is Err<E> {
   return result.type === "Err";
 }
 
+// rust Option/Result
+
+// tools
 export function map<T, U>(option: Option<T>, f: (value: T) => U): Option<U> {
   if (isSome(option)) {
     return { type: "Some", value: f(option.value) };
